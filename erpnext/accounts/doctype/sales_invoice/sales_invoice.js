@@ -17,8 +17,7 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
         var me = this;
         this._super();
         //CustomeScriptWork
-        if (this.frm.doc.items != undefined && this.frm.doc.items[0].item_name != undefined && this.frm.doc.items.length > 0 && this.frm.doc.items[0].item_name.startsWith("TIMETRK")) {
-            console.log(this.frm.doc);
+        if (this.frm.doc.items != undefined && this.frm.doc.items[0].item_name != undefined && this.frm.doc.items.length > 0 && this.frm.doc.items[0].item_name.startsWith("TIMETRK")) {           
             
             tempList = this.frm.doc.tempList;
             this.frm.doc.tempList = undefined;
@@ -69,7 +68,7 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
                 });                
             }
 
-            //console.log(this.frm.doc.apply_discount_on);//= this.frm.doc.apply_discount_on
+            
         }
         if (this.frm.doc.contract_name == undefined) {
             cur_frm.set_df_property("contract_section", "hidden", true);
@@ -92,24 +91,19 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
             this.frm.doc.periodic_amount = 0;
 
             getPaymentFrequencyData(this.frm, function (paymentFrequencyData,_frm) {
-                console.log(_frm);
+               
+                //console.log(paymentFrequencyData);
                 var month = paymentFrequencyData.message.month;
-                var amount = (monthly_amount * month);              
-
-                additional_discount_percentage = _frm.doc.additional_discount_percentage;
+                var amount = parseFloat(monthly_amount * month);             
+                
+                var additional_discount_percentage = _frm.doc.additional_discount_percentage;
+                
                 var discount_amount=(parseFloat(amount) * additional_discount_percentage) / 100;
-
+                
                 _frm.doc.discount_amount = parseFloat(discount_amount);
                 refresh_field("discount_amount");
                 _frm.doc.periodic_amount = amount;
-                refresh_field("periodic_amount");
-
-                //additional_discount_percentage = this.frm.doc.additional_discount_percentage;
-
-                //this.frm.doc.discount_amount = (parseFloat(amount) * parseFloat(additional_discount_percentage)) / 100;
-                //refresh_field("discount_amount");
-                //this.frm.doc.periodic_amount = amount;
-                //refresh_field("periodic_amount");
+                refresh_field("periodic_amount");              
 
             });
 
@@ -432,10 +426,9 @@ getPaymentFrequencyData = function (frm, func) {
                 doctype: "Payment Frequency",
                 name: payment_frequency
             },
-            callback: function (response) {
-                //console.log(response);
+            callback: function (response) {               
                 func(response,frm);
-                //return response.message.month;
+                
             }
         })
     }
